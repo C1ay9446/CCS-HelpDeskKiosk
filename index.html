@@ -7,13 +7,18 @@
     <script>
         function handleCredentialResponse(response) {
             console.log('Encoded JWT ID token: ' + response.credential);
-            // Here you can verify the ID token and determine if the user is a staff member
-            // and then allow them to proceed with the form submission or display appropriate content.
+
+            // Set a flag to indicate the user is authenticated
+            document.getElementById("oauth-status").value = "authenticated";
+
+            // Automatically submit the form after authentication
+            document.getElementById("tech-ticket-form").submit();
         }
 
         function initializeOAuth() {
+            console.log('Initializing OAuth...');
             google.accounts.id.initialize({
-                client_id: '82652846069-ud6p3mjas3qqf4pc3gk3okbmdofh967f.apps.googleusercontent.com',
+                client_id: 'YOUR_GOOGLE_CLIENT_ID',
                 callback: handleCredentialResponse
             });
         }
@@ -21,8 +26,10 @@
         function checkRole() {
             const role = document.querySelector('input[name="role"]:checked').value;
             if (role === 'Staff') {
+                console.log('Staff selected, prompting Google Sign-In...');
                 google.accounts.id.prompt(); // Prompt the user to sign in
             } else {
+                console.log('Student selected, submitting form without authentication...');
                 document.getElementById("tech-ticket-form").submit();
             }
         }
@@ -49,6 +56,9 @@
         <!-- Description Field -->
         <label for="description">Please describe your issue:</label><br>
         <textarea id="description" name="entry.629600984" rows="4" cols="50" required></textarea><br><br>
+
+        <!-- Hidden input to track OAuth status -->
+        <input type="hidden" id="oauth-status" name="oauth-status" value="">
 
         <button type="button" onclick="checkRole()">Submit</button>
     </form>
