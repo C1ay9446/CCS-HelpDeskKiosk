@@ -3,18 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Tech Ticket Submission</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        function handleCredentialResponse(response) {
+            console.log('Encoded JWT ID token: ' + response.credential);
+            // Here you can verify the ID token and determine if the user is a staff member
+            // and then allow them to proceed with the form submission or display appropriate content.
+        }
+
+        function initializeOAuth() {
+            google.accounts.id.initialize({
+                client_id: '82652846069-ud6p3mjas3qqf4pc3gk3okbmdofh967f.apps.googleusercontent.com',
+                callback: handleCredentialResponse
+            });
+        }
+
+        function checkRole() {
+            const role = document.querySelector('input[name="role"]:checked').value;
+            if (role === 'Staff') {
+                google.accounts.id.prompt(); // Prompt the user to sign in
+            } else {
+                document.getElementById("tech-ticket-form").submit();
+            }
+        }
+
+        window.onload = initializeOAuth;
+    </script>
 </head>
 <body>
     <h2>Submit a Tech Ticket</h2>
-    <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdx5aAKC3ngBmrFhdQc1rrF8tjG6hYF4WJ5OTCdYNr9YEz4tg/formResponse" method="POST" target="_self" id="mG61Hd">
+    <form id="tech-ticket-form" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdx5aAKC3ngBmrFhdQc1rrF8tjG6hYF4WJ5OTCdYNr9YEz4tg/formResponse" method="POST" target="_self">
         <!-- Name Field -->
         <label for="name">Name:</label>
         <input type="text" id="name" name="entry.2058290213" required><br><br>
 
         <!-- Role Field -->
         <label for="role">Are you a Staff or Student?</label><br>
-        <input type="radio" id="staff" name="entry.1254467479" value="Staff"> Staff<br>
-        <input type="radio" id="student" name="entry.1254467479" value="Student"> Student<br><br>
+        <input type="radio" id="staff" name="role" value="Staff"> Staff<br>
+        <input type="radio" id="student" name="role" value="Student"> Student<br><br>
 
         <!-- Issue Field -->
         <label for="issue">What is your issue?</label>
@@ -24,7 +50,7 @@
         <label for="description">Please describe your issue:</label><br>
         <textarea id="description" name="entry.629600984" rows="4" cols="50" required></textarea><br><br>
 
-        <button type="submit">Submit</button>
+        <button type="button" onclick="checkRole()">Submit</button>
     </form>
 </body>
 </html>
